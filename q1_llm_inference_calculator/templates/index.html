@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Inference Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .results-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .metric-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .metric-unit {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .compatibility-indicator {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .compatible {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .incompatible {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .recommendations {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .recommendations h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations li {
+            padding: 5px 0;
+            color: #495057;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .recommendations li:before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 LLM Inference Calculator</h1>
+            <p>Estimate costs, latency, and memory usage for LLM inference</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h2>📊 Input Parameters</h2>
+                <form id="calculatorForm">
+                    <div class="form-group">
+                        <label for="model_size">Model Size</label>
+                        <select id="model_size" name="model_size" required>
+                            <option value="7B">7B Parameters (~14 GB)</option>
+                            <option value="13B">13B Parameters (~26 GB)</option>
+                            <option value="GPT-4">GPT-4 (~350 GB)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tokens">Number of Tokens</label>
+                        <input type="number" id="tokens" name="tokens" value="1024" min="1" max="8192" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="batch_size">Batch Size</label>
+                        <input type="number" id="batch_size" name="batch_size" value="1" min="1" max="32" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hardware_type">Hardware Type</label>
+                        <select id="hardware_type" name="hardware_type" required>
+                            <option value="RTX4090">RTX 4090 (24 GB VRAM)</option>
+                            <option value="V100">V100 (16 GB VRAM)</option>
+                            <option value="A100">A100 (40 GB VRAM)</option>
+                            <option value="H100">H100 (80 GB VRAM)</option>
+                            <option value="CPU">CPU (64 GB RAM)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deployment_mode">Deployment Mode</label>
+                        <select id="deployment_mode" name="deployment_mode" required>
+                            <option value="local">Local</option>
+                            <option value="cloud">Cloud</option>
+                            <option value="edge">Edge</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="requests_per_hour">Requests per Hour</label>
+                        <input type="number" id="requests_per_hour" name="requests_per_hour" value="100" min="1" max="10000" required>
+                    </div>
+
+                    <button type="submit" class="calculate-btn">🚀 Calculate Metrics</button>
+                </form>
+            </div>
+
+            <div class="results-section">
+                <h2>📈 Results</h2>
+                <div id="results">
+                    <div class="loading">
+                        <p>Enter parameters and click "Calculate Metrics" to see results</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculatorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Show loading
+            document.getElementById('results').innerHTML = '<div class="loading">Calculating...</div>';
+            
+            try {
+                const response = await fetch('/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayResults(result.result);
+                } else {
+                    document.getElementById('results').innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('results').innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> Failed to calculate metrics. Please try again.
+                    </div>
+                `;
+            }
+        });
+
+        function displayResults(data) {
+            const results = data;
+            const summary = results.summary;
+            const memory = results.memory;
+            const latency = results.latency;
+            const cost = results.cost;
+            const compatibility = results.compatibility;
+
+            let html = `
+                <div class="metric-card">
+                    <div class="metric-title">💾 Memory Usage</div>
+                    <div class="metric-value">${memory.total_memory_gb.toFixed(1)}</div>
+                    <div class="metric-unit">GB Total Memory</div>
+                    <div class="compatibility-indicator ${memory.memory_fits ? 'compatible' : 'incompatible'}">
+                        ${memory.memory_fits ? '✅ Compatible' : '❌ Incompatible'}
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-title">⚡ Latency</div>
+                    <div class="metric-value">${latency.total_latency_seconds.toFixed(2)}</div>
+                    <div class="metric-unit">seconds per request</div>
+                    <div class="metric-value" style="font-size: 1.2em; color: #28a745;">${latency.tokens_per_second.toFixed(1)}</div>
+                    <div class="metric-unit">tokens per second</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-title">💰 Cost Analysis</div>
+                    <div class="metric-value">$${cost.cost_per_request.toFixed(6)}</div>
+                    <div class="metric-unit">per request</div>
+                    <div class="metric-value" style="font-size: 1.2em; color: #dc3545;">$${cost.monthly_cost.toFixed(2)}</div>
+                    <div class="metric-unit">monthly cost</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-title">🎯 Performance Score</div>
+                    <div class="metric-value">${compatibility.performance_score.toFixed(1)}</div>
+                    <div class="metric-unit">out of 100</div>
+                    <div class="compatibility-indicator ${compatibility.latency_acceptable ? 'compatible' : 'warning'}">
+                        ${compatibility.latency_acceptable ? '✅ Latency OK' : '⚠️ High Latency'}
+                    </div>
+                </div>
+            `;
+
+            if (compatibility.recommendations && compatibility.recommendations.length > 0) {
+                html += `
+                    <div class="recommendations">
+                        <h4>💡 Recommendations</h4>
+                        <ul>
+                            ${compatibility.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            document.getElementById('results').innerHTML = html;
+        }
+
+        // Add some interactivity
+        document.getElementById('model_size').addEventListener('change', function() {
+            const modelSize = this.value;
+            const tokensInput = document.getElementById('tokens');
+            
+            // Suggest appropriate token ranges based on model size
+            if (modelSize === '7B') {
+                tokensInput.placeholder = 'Recommended: 100-2048 tokens';
+            } else if (modelSize === '13B') {
+                tokensInput.placeholder = 'Recommended: 100-4096 tokens';
+            } else if (modelSize === 'GPT-4') {
+                tokensInput.placeholder = 'Recommended: 100-8192 tokens';
+            }
+        });
+
+        document.getElementById('hardware_type').addEventListener('change', function() {
+            const hardware = this.value;
+            const batchSizeInput = document.getElementById('batch_size');
+            
+            // Suggest appropriate batch sizes based on hardware
+            if (hardware === 'RTX4090') {
+                batchSizeInput.placeholder = 'Recommended: 1-8';
+            } else if (hardware === 'A100') {
+                batchSizeInput.placeholder = 'Recommended: 1-16';
+            } else if (hardware === 'H100') {
+                batchSizeInput.placeholder = 'Recommended: 1-32';
+            } else if (hardware === 'CPU') {
+                batchSizeInput.placeholder = 'Recommended: 1-4';
+            }
+        });
+    </script>
+</body>
+</html> 
