@@ -135,14 +135,17 @@ GET /api/agents
 **Analysis**:
 - Task Type: web_development
 - Complexity: medium
-- Languages: JavaScript, TypeScript
-- Frameworks: React, Stripe
-- Domain: web
+- Languages: JavaScript, html, css
+- Frameworks: React, Redux (optional), Payment Gateway SDKs (e.g., Stripe, PayPal), Material-UI/Chakra UI/Ant Design (optional), Axios/Fetch API
+- Duration: medium
+- Team size: individual|small_team
 
 **Top Recommendations**:
-1. **Cursor** (Score: 0.92) - Excellent for React development with strong code generation
-2. **GitHub Copilot** (Score: 0.85) - Great for general web development and code completion
-3. **Claude** (Score: 0.78) - Strong reasoning for complex integrations
+1. **Cursor** (Score: 0.95) - Excellent for React development with strong code generation
+2. **Devin Cognition** (Score: 0.9) - Great for general web development and code completion
+3. **Claude** (Score: 0.85) - Strong reasoning for complex integrations
+
+![Example 1: Web Development Task](demo/Example_1.png)
 
 ### Example 2: Data Science
 **Task**: "Create a machine learning model for customer churn prediction using Python"
@@ -151,13 +154,16 @@ GET /api/agents
 - Task Type: data_science
 - Complexity: high
 - Languages: Python
-- Frameworks: scikit-learn, pandas, numpy
-- Domain: data
+- Frameworks: scikit-learn, pandas, numpy, matplotlib, seaborn
+- Duration: medium
+- Team size: individual
 
 **Top Recommendations**:
-1. **Claude** (Score: 0.95) - Excellent for complex ML tasks and reasoning
-2. **ChatGPT** (Score: 0.88) - Strong in data science and problem-solving
-3. **Kite** (Score: 0.82) - Python-focused with ML capabilities
+1. **Cursor** (Score: 0.95) - Excellent for complex ML tasks and reasoning
+2. **Claude** (Score: 0.92) - Strong in data science and problem-solving
+3. **ChatGpt** (Score: 0.9) - Python-focused with ML capabilities
+
+![Example 2: Data Science Task](demo/Example_2.png)
 
 ### Example 3: Mobile Development
 **Task**: "Develop a Flutter app for food delivery with real-time tracking"
@@ -166,13 +172,16 @@ GET /api/agents
 - Task Type: mobile_development
 - Complexity: high
 - Languages: Dart
-- Frameworks: Flutter, Firebase
-- Domain: mobile
+- Frameworks: Flutter
+- Duration: long
+- Team size: small_team
 
 **Top Recommendations**:
-1. **Cursor** (Score: 0.89) - Excellent for complex mobile development
-2. **Devin** (Score: 0.86) - End-to-end development capabilities
-3. **GitHub Copilot** (Score: 0.81) - Good for general development tasks
+1. **Devin** (Score: 0.95) - Excellent for complex mobile development
+2. **Cursor** (Score: 0.9) - End-to-end development capabilities
+3. **Claude** (Score: 0.85) - Good for general development tasks
+
+![Example 3: Mobile Development Task](demo/Example_3.png)
 
 ## 🏗️ Project Structure
 
@@ -185,7 +194,6 @@ q2_agent_recommender/
 ├── requirements.txt       # Python dependencies
 ├── README.md             # This file
 ├── demo/                 # Screenshots and examples
-│   └── README.md
 └── templates/            # HTML templates
     ├── index.html        # Main interface
     └── agents.html       # Agent database view
