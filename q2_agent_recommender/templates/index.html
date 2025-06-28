@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Coding Agent Recommender</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .loading {
+            display: none;
+        }
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-4xl font-bold mb-2">
+                        <i class="fas fa-robot mr-3"></i>
+                        AI Coding Agent Recommender
+                    </h1>
+                    <p class="text-xl opacity-90">Find the perfect AI coding assistant for your task</p>
+                </div>
+                <div class="text-right">
+                    <a href="/agents" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-list mr-2"></i>
+                        View All Agents
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Task Input Section -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-tasks mr-3 text-purple-600"></i>
+                    Describe Your Coding Task
+                </h2>
+                
+                <form id="taskForm" class="space-y-6">
+                    <div>
+                        <label for="taskDescription" class="block text-sm font-medium text-gray-700 mb-2">
+                            Task Description
+                        </label>
+                        <textarea 
+                            id="taskDescription" 
+                            name="taskDescription" 
+                            rows="6" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                            placeholder="Describe your coding task in detail. For example: 'I need to build a React web application with user authentication, a dashboard, and real-time notifications. The app should be responsive and use TypeScript.'"
+                            required
+                        ></textarea>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <button 
+                            type="submit" 
+                            class="bg-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center"
+                            id="submitBtn"
+                        >
+                            <i class="fas fa-search mr-2"></i>
+                            Get Recommendations
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Loading Indicator -->
+                <div id="loading" class="loading text-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                    <p class="mt-4 text-gray-600">Analyzing your task and finding the best agents...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Analysis Section -->
+        <div id="taskAnalysis" class="max-w-4xl mx-auto mb-8 hidden">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-chart-bar mr-2 text-blue-600"></i>
+                    Task Analysis
+                </h3>
+                <div id="analysisContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Analysis content will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div id="recommendations" class="max-w-6xl mx-auto hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+                <i class="fas fa-star mr-3 text-yellow-500"></i>
+                Top Recommendations
+            </h2>
+            
+            <div id="recommendationsList" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Recommendations will be populated here -->
+            </div>
+        </div>
+
+        <!-- Error Section -->
+        <div id="error" class="max-w-4xl mx-auto hidden">
+            <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-red-800">Error</h3>
+                </div>
+                <p id="errorMessage" class="text-red-700 mt-2"></p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-400">
+                AI Coding Agent Recommendation System | Built with Flask and Tailwind CSS
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('taskForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const taskDescription = document.getElementById('taskDescription').value.trim();
+            if (!taskDescription) {
+                showError('Please enter a task description');
+                return;
+            }
+            
+            // Show loading
+            showLoading(true);
+            hideError();
+            hideResults();
+            
+            try {
+                const response = await fetch('/recommend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        task_description: taskDescription
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayTaskAnalysis(data.task_analysis);
+                    displayRecommendations(data.recommendations);
+                } else {
+                    showError(data.error || 'An error occurred while getting recommendations');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                showLoading(false);
+            }
+        });
+        
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (show) {
+                loading.classList.add('show');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Analyzing...';
+            } else {
+                loading.classList.remove('show');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-search mr-2"></i>Get Recommendations';
+            }
+        }
+        
+        function displayTaskAnalysis(analysis) {
+            const taskAnalysis = document.getElementById('taskAnalysis');
+            const analysisContent = document.getElementById('analysisContent');
+            
+            const analysisItems = [
+                { label: 'Task Type', value: analysis.task_type, icon: 'fas fa-tag', color: 'text-blue-600' },
+                { label: 'Complexity', value: analysis.complexity, icon: 'fas fa-layer-group', color: 'text-green-600' },
+                { label: 'Languages', value: analysis.languages.join(', ') || 'Not specified', icon: 'fas fa-code', color: 'text-purple-600' },
+                { label: 'Frameworks', value: analysis.frameworks.join(', ') || 'Not specified', icon: 'fas fa-cube', color: 'text-orange-600' },
+                { label: 'Duration', value: analysis.estimated_duration, icon: 'fas fa-clock', color: 'text-red-600' },
+                { label: 'Team Size', value: analysis.team_size, icon: 'fas fa-users', color: 'text-indigo-600' }
+            ];
+            
+            analysisContent.innerHTML = analysisItems.map(item => `
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center mb-2">
+                        <i class="${item.icon} ${item.color} mr-2"></i>
+                        <span class="font-semibold text-gray-700">${item.label}</span>
+                    </div>
+                    <p class="text-gray-800 capitalize">${item.value}</p>
+                </div>
+            `).join('');
+            
+            taskAnalysis.classList.remove('hidden');
+        }
+        
+        function displayRecommendations(recommendations) {
+            const recommendationsDiv = document.getElementById('recommendations');
+            const recommendationsList = document.getElementById('recommendationsList');
+            
+            recommendationsList.innerHTML = recommendations.map((rec, index) => `
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover ${index === 0 ? 'ring-2 ring-yellow-400' : ''}">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                                ${rec.rank}
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-xl font-bold text-gray-800">${rec.agent_name}</h3>
+                                <p class="text-sm text-gray-600">Score: ${rec.score}/1.0</p>
+                            </div>
+                        </div>
+                        ${index === 0 ? '<i class="fas fa-crown text-yellow-500 text-2xl"></i>' : ''}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-gray-700 mb-2">Why this agent?</h4>
+                        <p class="text-gray-600 text-sm">${rec.justification}</p>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase">Company</span>
+                            <p class="text-sm text-gray-800">${rec.agent_info.company}</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase">Pricing</span>
+                            <p class="text-sm text-gray-800">${rec.agent_info.pricing}</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-gray-500 uppercase">Languages</span>
+                            <p class="text-sm text-gray-800">${rec.agent_info.languages.slice(0, 5).join(', ')}${rec.agent_info.languages.length > 5 ? '...' : ''}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <a href="${rec.agent_info.website}" target="_blank" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold text-sm">
+                            Visit Website
+                            <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+            
+            recommendationsDiv.classList.remove('hidden');
+        }
+        
+        function showError(message) {
+            const error = document.getElementById('error');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            errorMessage.textContent = message;
+            error.classList.remove('hidden');
+        }
+        
+        function hideError() {
+            document.getElementById('error').classList.add('hidden');
+        }
+        
+        function hideResults() {
+            document.getElementById('taskAnalysis').classList.add('hidden');
+            document.getElementById('recommendations').classList.add('hidden');
+        }
+    </script>
+</body>
+</html> 
