@@ -1,0 +1,198 @@
+{
+  "tools": {
+    "github_copilot": {
+      "name": "GitHub Copilot",
+      "description": "AI pair programmer that suggests code completions and entire functions",
+      "strengths": [
+        "Context-aware code completion",
+        "Function and method generation",
+        "Documentation generation",
+        "Test case generation",
+        "Multi-language support"
+      ],
+      "limitations": [
+        "Limited to code context",
+        "May not understand complex business logic",
+        "Sometimes generates verbose code"
+      ],
+      "optimization_strategies": [
+        "Provide clear function signatures",
+        "Include type hints and comments",
+        "Specify desired code style",
+        "Add context about the codebase",
+        "Use descriptive variable names in examples"
+      ],
+      "prompt_templates": {
+        "function_generation": "Write a {language} function that {description}. Include proper error handling and documentation.",
+        "code_completion": "Complete this {language} code: {code_snippet}",
+        "refactoring": "Refactor this {language} code to be more {quality_attribute}: {code_snippet}"
+      }
+    },
+    "cursor": {
+      "name": "Cursor",
+      "description": "AI-first code editor with advanced code generation and editing capabilities",
+      "strengths": [
+        "Advanced code generation",
+        "Multi-file context understanding",
+        "Refactoring and optimization",
+        "Debugging assistance",
+        "Project-wide code analysis"
+      ],
+      "limitations": [
+        "Requires good project structure",
+        "May need specific file context",
+        "Sometimes over-engineers solutions"
+      ],
+      "optimization_strategies": [
+        "Provide file structure context",
+        "Specify architectural patterns",
+        "Include related file references",
+        "Use clear naming conventions",
+        "Specify performance requirements"
+      ],
+      "prompt_templates": {
+        "code_generation": "Generate {language} code for {feature} following {architecture_pattern} pattern. Consider files: {related_files}",
+        "refactoring": "Refactor {file_path} to improve {aspect}. Current structure: {current_structure}",
+        "debugging": "Analyze this {language} code for potential issues: {code_snippet}"
+      }
+    },
+    "replit": {
+      "name": "Replit",
+      "description": "Online IDE with AI coding assistant for rapid prototyping",
+      "strengths": [
+        "Quick prototyping",
+        "Multi-language support",
+        "Built-in hosting",
+        "Collaborative coding",
+        "Simple project setup"
+      ],
+      "limitations": [
+        "Limited to web-based environment",
+        "May not handle complex enterprise patterns",
+        "Resource constraints"
+      ],
+      "optimization_strategies": [
+        "Keep prompts simple and direct",
+        "Focus on working examples",
+        "Specify runtime environment",
+        "Include sample inputs/outputs",
+        "Use step-by-step instructions"
+      ],
+      "prompt_templates": {
+        "prototype": "Create a {language} prototype for {feature}. Include sample data and basic functionality.",
+        "web_app": "Build a simple {framework} web app that {description}. Include HTML, CSS, and JavaScript.",
+        "script": "Write a {language} script that {task}. Include error handling and usage examples."
+      }
+    },
+    "amazon_codewhisperer": {
+      "name": "Amazon CodeWhisperer",
+      "description": "AI coding companion with security scanning and AWS integration",
+      "strengths": [
+        "AWS service integration",
+        "Security best practices",
+        "Infrastructure as Code",
+        "Cloud-native development",
+        "Security scanning"
+      ],
+      "limitations": [
+        "AWS-focused",
+        "May not be optimal for other cloud providers",
+        "Limited to supported languages"
+      ],
+      "optimization_strategies": [
+        "Specify AWS services when relevant",
+        "Include security requirements",
+        "Mention cloud deployment context",
+        "Use AWS best practices terminology",
+        "Include infrastructure considerations"
+      ],
+      "prompt_templates": {
+        "aws_integration": "Create {language} code to integrate with {aws_service}. Include proper error handling and security best practices.",
+        "lambda_function": "Write an AWS Lambda function in {language} that {description}. Include IAM permissions and error handling.",
+        "cloudformation": "Generate CloudFormation template for {resource_type} with {requirements}."
+      }
+    },
+    "tabnine": {
+      "name": "Tabnine",
+      "description": "AI code completion tool with team learning capabilities",
+      "strengths": [
+        "Team-based learning",
+        "Custom model training",
+        "Privacy-focused",
+        "IDE integration",
+        "Code pattern recognition"
+      ],
+      "limitations": [
+        "Requires training data",
+        "May not understand new patterns",
+        "Limited to learned patterns"
+      ],
+      "optimization_strategies": [
+        "Use consistent coding patterns",
+        "Include team-specific conventions",
+        "Reference existing codebase patterns",
+        "Specify coding standards",
+        "Use familiar naming conventions"
+      ],
+      "prompt_templates": {
+        "pattern_completion": "Complete this {language} code following our team's {pattern_name} pattern: {code_snippet}",
+        "function_extension": "Extend this {language} function with {additional_feature}: {existing_function}",
+        "class_implementation": "Implement {class_name} class in {language} following our {architecture_pattern}."
+      }
+    },
+    "kite": {
+      "name": "Kite",
+      "description": "AI-powered coding assistant with documentation integration",
+      "strengths": [
+        "Documentation integration",
+        "Library suggestions",
+        "Code examples",
+        "Multi-language support",
+        "Context-aware completions"
+      ],
+      "limitations": [
+        "Limited to supported languages",
+        "May suggest outdated libraries",
+        "Requires internet connection"
+      ],
+      "optimization_strategies": [
+        "Specify library versions",
+        "Include documentation requirements",
+        "Mention specific frameworks",
+        "Request code examples",
+        "Specify compatibility requirements"
+      ],
+      "prompt_templates": {
+        "library_usage": "Show me how to use {library_name} {version} in {language} for {task}. Include examples and documentation.",
+        "api_integration": "Create {language} code to integrate with {api_name} API. Include authentication and error handling.",
+        "framework_usage": "Write {language} code using {framework_name} to {description}. Include best practices and examples."
+      }
+    }
+  },
+  "common_optimization_patterns": {
+    "complexity_reduction": [
+      "Break down complex requirements into smaller tasks",
+      "Use step-by-step instructions",
+      "Provide concrete examples",
+      "Specify input/output formats"
+    ],
+    "context_enhancement": [
+      "Include relevant file paths",
+      "Specify programming language and version",
+      "Mention framework or library requirements",
+      "Provide sample data or test cases"
+    ],
+    "clarity_improvement": [
+      "Use specific, actionable language",
+      "Avoid ambiguous terms",
+      "Include success criteria",
+      "Specify error handling requirements"
+    ],
+    "tool_specific_enhancement": [
+      "Leverage tool-specific features",
+      "Use tool-appropriate terminology",
+      "Include tool-specific context",
+      "Follow tool best practices"
+    ]
+  }
+} 
